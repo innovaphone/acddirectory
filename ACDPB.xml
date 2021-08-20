@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<voicemail>
+<!-- innovaphone ACD Phone Book== inno srl V1.00 KWA 11 2012 -->
+<!-- Main routine  -->
+	<function define="Main">
+		<pbx-getcallinfo out-cgpn="$cgpn" out-cdpn="$cdpn" out-leg2="$leg2" />
+		<event type="timer" name="vbguard">
+  		  		<pbx-disc /> 
+  		</event>
+		<timer name="vbguard" sec="10" />
+		<store-cookie root="" name="Book_Prefix.txt" out="$Bprefix"/>
+		<lib-strcat string="$Bprefix" string2="$cgpn" out-string="$Search" />
+		<pbx-finduser-e164 e164="$Search" out-cn="$cn"/> 
+		<store-cookie root="" name="Default_Target.txt" out="$DTarget"/>
+		<if cond="$cn">
+        		<pbx-query-obj name="$cn" type="cfu" out="$ACDtarget"/>
+	        	<if cond="$ACDtarget">
+	        	     <assign out="$DTarget" value="$ACDtarget"/>
+		        </if>
+	        </if>
+		<pbx-xfer e164="$DTarget" />
+      </function>    
+</voicemail>
+<!-- ACD using the PBX Directory wiki-src/xml/ACDdirectory 1,0,0,0 (C) innovaphone AG 2010-2012 -->
